@@ -1,0 +1,77 @@
+{
+  "name": "Buddies",
+  "displayName": "Buddies",
+  "description": "頑張ってる自分を励ましサポートする拡張機能です。",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:extension.encourageBuddy",
+    "onCommand:extension.stopEncourageBuddy",
+    "onCommand:extension.showPracticeQuestion",
+    "onCommand:extension.showGrowthTree",
+    "onView:growthTreeView"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "encourageBuddy",
+          "title": "Encourage Buddy",
+          "icon": "resources/tree.svg"
+        }
+      ]
+    },
+    "views": {
+      "encourageBuddy": [
+        {
+          "type": "webview",
+          "id": "growthTreeView",
+          "name": "Growth Tree",
+          "icon": "resources/tree.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "extension.encourageBuddy",
+        "title": "just do it"
+      },
+      {
+        "command": "extension.showPracticeQuestion",
+        "title": "let me Practice"
+      },
+      {
+        "command": "extension.showGrowthTree",
+        "title": "Show Growth Tree"
+      },
+      {
+        "command": "extension.stopEncourageBuddy",
+        "title": "good night"
+      }
+    ]
+  },
+  
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.95.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.13.0"
+  },
+  "dependencies": {
+    "monaco-editor": "^0.52.0"
+  }
+}

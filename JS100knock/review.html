@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>間違った問題一覧</title>
+</head>
+
+<body>
+    <p>復習部屋</p>
+    <h1 id="question"></h1>
+    <div class="container" id="editor" style="height: 300px">
+        <!-- ここに誤った問題を表示する -->
+    </div>
+    <div class="choice">
+        <label class="choice-label">
+            <input type="radio" name="ansewer" value="0">
+            1
+        </label>
+        <label class="choice-label">
+            <input type="radio" name="ansewer" value="1">
+            2
+        </label>
+        <label class="choice-label">
+            <input type="radio" name="ansewer" value="2">
+            3
+        </label>
+    </div>
+    <div class="button-container">
+        <button onclick="checkAnswer()">実行</button>
+        <button id="next-button" onclick="nextWrongQuestion()">次の問題</button>
+        <button id="delete-button" onclick="deleteQuestion()">削除</button>
+    </div>
+    <div id="message"></div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.js"></script>
+    <!-- Monaco Editor読み込み -->
+    <script>
+        require.config({
+            paths: {
+                'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs'
+            }
+        });
+
+        require(['vs/editor/editor.main'], function () {
+            //エディタの初期化
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                value: '', //初期値は空
+                language: 'javascript',
+                theme: 'vs-dark',
+                minimap: { enabled: false },
+                lineNumbers: 'on',
+                roundedSelection: false,
+                scrollBeyondLastLine: false,
+                readOnly: true,
+                fontSize: 14,
+                tabSize: 2,
+                automaticLayout: true
+            });
+
+            //初期化
+            initializeWrongQuestions();
+        });
+
+        let wrongQuestions = []; //間違えた問題
+        let currentWrongIndex = 0; //現在表示している問題（誤った問題の1問目）
+
+        function initializeWrongQuestions() {
+            //localStorageから間違えた問題のデータを取得（文字列→データへ変換）
+            const studyData = JSON.parse(localStorage.getItem('studyData')) || {}; //なければnull(空欄)
+            wrongQuestions = studyData.wrongQuestions || []; //同上
+
+            if (wrongQuestions.length > 0) {
+                //最初の間違えた問題を表示
+                displayWrongQuestion(0);
+            } else {//なければ褒め
+                $("#message").text("間違えた問題ナシ！素晴らしい！！").css('color', '#4caf50');
+            }
+        }
+        //間違えた問題があれば
+        function displayWrongQuestion(index) {//index=誤った問題の番号
+            if (index >= 0 // && index < wrongQuestions.length
+            ) {
+                const questionIndex = wrongQuestions[index]; //指定
+                const question = allQuestions[questionIndex]; //元データ（全体）から探し出す
+
+                $("#question").text(question.question);
+                editor.setValue(question.choices.join('\n\n'));
+                $("input[name='ansewer']").prop('checked', false);
+                $("#message").text("");
+
+                currentWrongIndex = index;
+            }
+        }
+
+        function checkAnswer() {
+            const selectedAnswer = $('input[name="ansewer"]:checked');//どの選択肢をチェックしてるか？もここで確認
+            if (!selectedAnswer.length) {
+                $('#message').text('解答を選択してください').css('color', '#f44336');
+                return;
+            }
+
+            const questionIndex = wrongQuestions[currentWrongIndex];
+            const isCorrect = parseInt(selectedAnswer.val()) === allQuestions[questionIndex].correctIndex;
+
+            if (isCorrect) {
+                $('#message').text('正解！🌸').css('color', '#4caf50');
+            } else {
+                $('#message').text('残念！もう一回挑戦しよ！').css('color', '#f44336');
+            }
+        }
+
+        function nextWrongQuestion() {
+            if (currentWrongIndex < wrongQuestions.length - 1) {
+                displayWrongQuestion(currentWrongIndex + 1);
+            } else {
+                $("#message").text("オールクリア！").css('color', '#4caf50');
+            }
+        }
+
+        function deleteQuestion() {
+            if (wrongQuestions.length > 0) {
+                //現在の問題を配列から削除
+                wrongQuestions.splice(currentWrongIndex, 1);
+
+                //localStorageを更新
+                const studyData = JSON.parse(localStorage.getItem('studyData')) || {};
+                studyData.wrongQuestions = wrongQuestions;//バリューはwrongQuestion（オブジェクト）
+                localStorage.setItem('studyData', JSON.stringify(studyData)); //キーをstudyDataに指定
+
+                if (wrongQuestions.length > 0) {
+                    //次の問題を表示（または同じインデックスで次の問題）
+                    displayWrongQuestion(Math.min(currentWrongIndex, wrongQuestions.length - 1));
+                } else {
+                    $("#message").text("オールクリア！").css('color', '#4caf50');
+                    editor.setValue('');
+                    $("#question").text('');
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>

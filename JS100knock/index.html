@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>JavaScript関数問題 100本ノック</title>
+</head>
+
+<body>
+    <p>JavaScript100本ノック</p>
+    <h1 id="question"></h1>
+    <div class="container" id="editor" style="height: 300px"></div>
+    <div class="choice">
+        <label class="choice-label">
+            <input type="radio" name="ansewer" value="0">
+            1
+        </label>
+        <label class="choice-label">
+            <input type="radio" name="ansewer" value="1">
+            2
+        </label>
+        <label class="choice-label">
+            <input type="radio" name="ansewer" value="2">
+            3
+        </label>
+    </div>
+    <div class="button-container">
+        <button onclick="checkAnswer()">実行</button>
+        <button id="next-button" onclick="nextQuestion()">次の問題</button>
+        <button id="review-button"><a href="review.html" target="_blank">復習する</a></button>
+        <button id="delete-all" onclick="resetAll()">全てリセット</button>
+    </div>
+    <div id="message"></div>
+    <div id="statistics">
+        <!-- ここに正答率を表示 -->
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.js"></script>
+    <!-- Monaco Editor読み込み -->
+    <script>
+        require.config({
+            paths: {
+                'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs'
+            }
+        });
+
+        require(['vs/editor/editor.main'], function () {
+            // エディタの初期化
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                value: allQuestions[0].choices.join('\n\n'), //\nで改行
+                language: 'javascript',
+                theme: 'vs-dark', // ダークテーマを使用
+                minimap: { enabled: false }, // ミニマップを非表示
+                lineNumbers: 'on',
+                roundedSelection: false,
+                scrollBeyondLastLine: false,
+                readOnly: true, //読み取り専用
+                fontSize: 14,
+                tabSize: 2,
+                automaticLayout: true // コンテナのリサイズに対応
+            });
+            $("#question").text(allQuestions[0].question); //初期のランダム取得がうまくいかないため最初の問題は固定
+            initializeQuestions(); // 初期化
+            console.log("エディタ初期化後の残り問題数:", remainingQuestions.length);
+        });
+
+        function checkAnswer() {
+            const selectedAnswer = $('input[name="ansewer"]:checked');//「どの」選択肢を✓したか
+            if (!selectedAnswer) {
+                $('#message').text('解答を選択してください').css('color', '#f44336');
+                return;
+            }
+            //正解だったらisCorrectに
+            const isCorrect = parseInt(selectedAnswer.val()) === allQuestions[currentQuestionIndex].correctIndex;//parsIntで数値に変換（なくても==可）
+            let studyData = JSON.parse(localStorage.getItem("studyData")) || { //1問も答えてないときはnullなので||以降の初期値が入る
+                totalAnswered: 0,
+                correctAnswers: 0,
+                wrongQuestions: [] //現状重複して挿入される→重複を削除して、その削除した分totalAnswered--;したい
+            };
+
+            studyData.totalAnswered++; //回答済み総数を増やす
+
+            if (isCorrect) {
+                studyData.correctAnswers++;
+                $('#message').text('正解！🌸').css('color', '#4caf50');
+            } else {//誤った問題の場合の処理（重複していなければ追加する）
+                if (!studyData.wrongQuestions.includes(currentQuestionIndex)) {
+                    studyData.wrongQuestions.push(currentQuestionIndex);
+                } else {//重複していたらtotalAnsweredも1マイナス
+                    studyData.totalAnswered--;
+                }
+                $('#message').text('残念！もう一回挑戦しよ！').css('color', '#f44336');
+            }
+            localStorage.setItem("studyData", JSON.stringify(studyData)); //localStorageに保存するため文字列に変換
+
+            const correctRate = ((studyData.correctAnswers / studyData.totalAnswered) * 100).toFixed(1); //小数点なし
+            $("#statistics").text(`正解率：${correctRate}%`);
+        }
+
+        //未出題問題の配列
+        let remainingQuestions = [];
+        function initializeQuestions() {
+            //一旦全部入れる
+            remainingQuestions = Array.from({ length: allQuestions.length }, (_, i) => i); //問題全てに配列番号を付与する
+            console.log("初期化時の残り問題数:", remainingQuestions.length);
+        }
+        function nextQuestion() {
+            const isAnswered = $('input[name="ansewer"]:checked').length > 0;//選択肢の✓有無を確認
+            // 未回答の場合
+            if (!isAnswered) {
+                $('#message').text('解答を選択してください').css('color', '#f44336');
+                return;
+            }
+            console.log("nextQuestion開始時の残り問題数:", remainingQuestions.length);
+            //未出題が0になったらもう一回全部セットする
+            if (remainingQuestions.length === 0) {
+                initializeQuestions();
+                $('#message').text('全問題を一周しました！もう一度チャレンジ！');
+            }
+            //ランダムに未出題問題を選ぶ
+            const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+            const questionIndex = remainingQuestions[randomIndex];
+
+            //選んだ問題を未出題リストから削除　※これが大事！！！！
+            remainingQuestions.splice(randomIndex, 1);
+            console.log("問題選択後の残り問題数:", remainingQuestions.length);
+
+            //問題文、エディター部分、選択肢を更新（コメントは削除）
+            currentQuestionIndex = questionIndex;
+            const nextQuestion = allQuestions[questionIndex];
+            $("#question").text(nextQuestion.question);
+            editor.setValue(nextQuestion.choices.join('\n\n'));
+            $("input[name='ansewer']").prop('checked', false);
+            $("#message").text("");
+        }
+
+        function resetAll() {
+            localStorage.clear();
+            initializeQuestions();
+            $("#message").text("");
+            $("#statistics").text("");
+            $("input[name='ansewer']").prop('checked', false); // ラジオボタンの選択を解除
+
+            // 最初の状態を表示
+            currentQuestionIndex = 0;
+            $("#question").text(allQuestions[0].question);
+            editor.setValue(allQuestions[0].choices.join('\n\n'));
+        }
+
+        //初期化（ページ読み込み時に実行）
+        initializeQuestions();
+    </script>
+</body>
+
+</html>
