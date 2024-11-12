@@ -11,7 +11,7 @@ Buddies
 ## ③アプリのデプロイURL
 - 拡張機能のためデプロイ不可
 - JS練習問題のみ、100本ノック選択問題に変更しWebブラウザでも触ってもらえるようにしてみました！
-- URL：[]
+- URL：[https://einekleine.sakura.ne.jp/JS100knock/]
 
 ## ④アプリのログイン用IDまたはPassword（ある場合）
 - ID: なし
@@ -30,7 +30,7 @@ Buddies
 ## ⑦フリー項目（感想、シェアしたいこと等なんでも）
 - VSCodeの拡張機能を作るために最低限必要だと思われる内容はQiitaで発見しました。先人に感謝です。
 - あとは同じ提供元だからという理由でCopilotに質問を投げまくりましたが、長くなるとあの子はすぐフリーズします。もう少し一緒に頑張ってくれ。
-- 最低限必要なのはextension.js（実際のコード）とpackage.json（コマンドなどを指定しておく）の2つだけみたいです。参考になれば！
+- 最低限必要なのはextension.js（実際のコード）とpackage.json（コマンドなどを指定しておく）の2つだけみたいです。自身のVSCode上で実行とデバッグを行うなら.vscodeフォルダごとコピペ推奨。参考になれば！
 - [参考記事]
   - 1. [ここで共有していいか不明のため削除します]　ぷろぐら(by坂尻先生)
   - 2. [https://github.com/microsoft/monaco-editor/tree/main]　monaco-editorのGitHub（VSCodeっぽい見た目にできるもの）
