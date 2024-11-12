@@ -391,19 +391,19 @@ function activate(context) { //contextもVSCode APIが提供するオブジェ�
             'JavaScript Practice', //パネルのタイトル
             vscode.ViewColumn.One, //エディターのカラムに表示
             {
-                enableScripts: true // Webview内でスクリプトを有効にする
+                enableScripts: true //Webview内でスクリプトを有効にする
             }
         );
         //問題集
         const initialQuestion = questions[Math.floor(Math.random() * questions.length)];
         panel.webview.html = getWebviewContent({
             initialQuestion: initialQuestion,
-            questions: questions  // 全問題データも渡す
+            questions: questions  //全問題データも渡す
         });
     });
     context.subscriptions.push(disposableShowPracticeQuestion);
 
-    // ステータスバーにボタンを追加 
+    //ステータスバーにボタンを追加 
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.command = 'extension.showPracticeQuestion';
     statusBarItem.text = 'JS関数練習';
@@ -417,7 +417,7 @@ function getWebviewContent({ initialQuestion, questions }) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript 100本ノック</title>
+    <title>JavaScript 練習問題</title>
     <style>
         body {
             padding: 20px;
@@ -548,7 +548,7 @@ function getWebviewContent({ initialQuestion, questions }) {
 }
 
 
-
+//以下はいじってないです
 // 拡張機能を無効にするときの関数
 function deactivate() { }
 
