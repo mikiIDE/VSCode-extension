@@ -40,3 +40,4 @@ Buddies
   - 3. [https://qiita.com/_ken_/items/06161e8d4bac5e0bd209]　「知識0の状態からたった2時間でVSCodeの拡張機能を作った話」
   - 4. [https://github.com/microsoft/vscode-extension-samples]　「VSCode拡張機能のサンプル by Microsoft」
   - 5. [https://web-dev.tech/front-end/javascript/cherry-blossom-petal-falling-effect/] 「JSとCSSで桜を降らせるエフェクトを実装する方法【コピペOK】」
+  - 6. [https://www.youtube.com/shorts/J1LJom5NEjM]「通知のカウント表示を作る方法」（YouTubeショート動画です）

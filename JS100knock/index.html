@@ -29,7 +29,7 @@
     <div class="button-container">
         <button onclick="checkAnswer()">実行</button>
         <button id="next-button" onclick="nextQuestion()">次の問題</button>
-        <button id="review-button"><a href="review.html" target="_blank">復習する</a></button>
+        <button id="review-button" data-count="0"><a href="review.html" target="_blank">復習する</a></button>
         <button id="delete-all" onclick="resetAll()">全てリセット</button>
     </div>
     <div id="message"></div>
@@ -94,6 +94,7 @@
                 }
                 $('#message').text('残念！もう一回挑戦しよ！').css('color', '#f44336');
             }
+            $('#review-button').attr('data-count', studyData.wrongQuestions.length); //通知の数字を更新するため
             localStorage.setItem("studyData", JSON.stringify(studyData)); //localStorageに保存するため文字列に変換
 
             const correctRate = ((studyData.correctAnswers / studyData.totalAnswered) * 100).toFixed(1); //小数点なし
@@ -143,7 +144,7 @@
             $("#message").text("");
             $("#statistics").text("");
             $("input[name='ansewer']").prop('checked', false); // ラジオボタンの選択を解除
-
+            $('#review-button').attr('data-count', '0');
             // 最初の状態を表示
             currentQuestionIndex = 0;
             $("#question").text(allQuestions[0].question);
@@ -151,7 +152,24 @@
         }
 
         //初期化（ページ読み込み時に実行）
-        initializeQuestions();
+        document.addEventListener('DOMContentLoaded', function () {
+            //問題の初期化
+            initializeQuestions();
+
+            //通知バッジの初期化
+            let studyData = JSON.parse(localStorage.getItem("studyData")) || {
+                totalAnswered: 0,
+                correctAnswers: 0,
+                wrongQuestions: []
+            };
+            $('#review-button').attr('data-count', studyData.wrongQuestions.length);
+
+            //ページリロード後の正答率（localStorageが残っている場合は表示）
+            if (studyData.totalAnswered > 0) {
+                const correctRate = ((studyData.correctAnswers / studyData.totalAnswered) * 100).toFixed(1);
+                $("#statistics").text(`正解率：${correctRate}%`);
+            }
+        });
     </script>
 </body>
 
