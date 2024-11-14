@@ -1,0 +1,118 @@
+body {
+    font-family: "Hiragino Kaku Gothic ProN", "メイリオ", sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.card {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background: #4caf50;
+    color: white;
+    padding: 15px;
+    margin: 0;
+    text-align: center;
+}
+
+.card-content {
+    position: relative;
+    height: 400px;
+    background: linear-gradient(to bottom, #e1f5fe, #b3e5fc);
+    overflow: hidden;
+}
+
+#garden-area {
+    position: relative;
+    width: 100%;
+    height:100%;
+}
+
+.message-bubble {
+    color: #000;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 10px 15px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-out;
+    max-width: 150px;
+    text-align: center;
+    z-index: 2;
+}
+
+.flower {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flower-center {
+    width: 20px;
+    height: 20px;
+    background: #ffd700;
+    border-radius: 50%;
+    position: relative;
+}
+
+.petal {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: #ff69b4;
+    border-radius: 50%;
+}
+
+.leaf {
+    position: absolute;
+    width: 25px;
+    height: 12px;
+    background: #4caf50;
+    border-radius: 12px 12px 0 0;
+    transform-origin: bottom center;
+}
+
+#add-achievement {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 24px;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#add-achievement:hover {
+    background: #f1cde8;
+    transform: translateY(-2px);
+}
+button:active {
+    transform: translateY(0);
+}
+
+#time, #count{
+    display: flex;
+    justify-content: center;
+}
+
+#buttons {
+    font-size: 3rem;
+    text-align: center;
+  }
+  #start, #stop, #reset {
+    border-radius: .3rem;
+    box-shadow: 0 0 20px rgba(77, 78, 79, 0.25);
+  }
